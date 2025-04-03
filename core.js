@@ -1,6 +1,6 @@
 
-const WIDTH = 30;
-const HEIGHT = 20;
+const WIDTH = 300;
+const HEIGHT = 200;
 
 const COLORS = ["#6d001a", "#be0039", "#ff4500", "#ffa800", "#ffd635","#fff8b8",
                 "#00a368", "#00cc78", "#7eed56", "#00756f", "#009eaa", "#00ccc0",
@@ -25,7 +25,7 @@ var HISTORY = [];
  * @param {Int} color 
  */
 function setPixel(coord, color) {
-    if(coord == undefined || color == undefined || !Array.isArray(coord) || coord.length != 2 || coord[0] < 0 || coord[1] < 0 || color < 0 || coord[0] >= WIDTH || coord[1] >= HEIGHT || color >= COLORS.length)
+    if(coord == undefined || color == undefined || !Array.isArray(coord) || typeof color != "number" || coord.length != 2 || coord[0] < 0 || coord[1] < 0 || color < 0 || coord[0] >= WIDTH || coord[1] >= HEIGHT || color >= COLORS.length)
         return;
     
     addHistoryEntry(coord, color);

@@ -55,7 +55,7 @@ function sendPeriodic(server) {
         return;
     }
     
-    broadcast(data, server);
+    broadcast({type: TYPES.PLACE, pixels: data}, server);
 }
 
 function broadcast(data, server) {  
