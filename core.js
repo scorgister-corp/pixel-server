@@ -1,6 +1,10 @@
+const fs = require("fs");
 
-const WIDTH = 300;
-const HEIGHT = 200;
+const WIDTH = 256;
+const HEIGHT = 256;
+
+const PIXELS_SAVE_FILE = "./pixels.json";
+const HISTORY_SAVE_FILE = "./history.json";
 
 const COLORS = ["#6d001a", "#be0039", "#ff4500", "#ffa800", "#ffd635","#fff8b8",
                 "#00a368", "#00cc78", "#7eed56", "#00756f", "#009eaa", "#00ccc0",
@@ -10,14 +14,24 @@ const COLORS = ["#6d001a", "#be0039", "#ff4500", "#ffa800", "#ffd635","#fff8b8",
                 "#d4d7d9", "#ffffff"];
 
 var PIXELS = [];
-for(let y = 0; y < HEIGHT; y++) {
-    PIXELS.push([]);
-    for(let x = 0; x < WIDTH; x++) {
-        PIXELS[y].push(-1);
-    }
-}
-
 var HISTORY = [];
+
+if(!fs.existsSync(PIXELS_SAVE_FILE)) {
+    var pixs = [];
+    for(let y = 0; y < HEIGHT; y++) {
+        pixs.push([]);
+        for(let x = 0; x < WIDTH; x++) {
+            pixs[y].push(-1);
+        }
+    }
+    PIXELS = pixs;
+    fs.writeFileSync(PIXELS_SAVE_FILE, JSON.stringify(pixs));
+}else
+    PIXELS = JSON.parse(fs.readFileSync(PIXELS_SAVE_FILE));
+
+if(!fs.existsSync(HISTORY_SAVE_FILE)) {
+    fs.writeFileSync(HISTORY_SAVE_FILE, JSON.stringify([]));
+}
 
 /**
  * 
@@ -46,11 +60,26 @@ function addHistoryEntry(coord, color) {
 function getPeriodicData() {
     let data = Object.values(HISTORY);
     HISTORY = [];
+    writeBackup(data);
+
     return data;
 }
 
 function getLoginData() {
     return {pixels: PIXELS, colors: COLORS};
+}
+
+function writeBackup(historyData) {
+    fs.readFile(HISTORY_SAVE_FILE, (err, data) => {
+        let oldData = JSON.parse(data);
+        for(let entry of historyData) {
+            oldData.push(entry);
+        }
+
+        fs.writeFileSync(HISTORY_SAVE_FILE, JSON.stringify(oldData));
+    });
+
+    fs.writeFile(PIXELS_SAVE_FILE, JSON.stringify(PIXELS), ()=>{})
 }
 
 module.exports = {

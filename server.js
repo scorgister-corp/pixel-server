@@ -1,7 +1,7 @@
 const {WebSocketServer} = require("ws");
 const core = require("./core");
 
-const PERIODIC_SEND_TIMEOUT = 3000;
+const PERIODIC_SEND_TIMEOUT = 5000;
 const TYPES = {LOGIN: 0, PLACE: 1};
 
 /**
