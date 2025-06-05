@@ -2,7 +2,9 @@ const {WebSocketServer} = require("ws");
 const core = require("./core");
 
 const PERIODIC_SEND_TIMEOUT = 500;
-const TYPES = {LOGIN: 0, PLACE: 1};
+const TYPES = {LOGIN: 0, PLACE: 1, PING: -1};
+
+const PING_PACKAGE = {ping: 1};
 
 /**
  * Trigger de connexion client
@@ -31,6 +33,9 @@ function onClientData(data, socket) {
             break;
         case TYPES.PLACE:
             onPlace(data, socket);
+            break;
+        case TYPES.PING:
+            send(PING_PACKAGE, socket);
             break;
     }
 }
