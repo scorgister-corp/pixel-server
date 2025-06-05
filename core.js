@@ -6,6 +6,8 @@ const HEIGHT = 256;
 const PIXELS_SAVE_FILE = "./pixels.json";
 const HISTORY_SAVE_FILE = "./history.json";
 
+const BACKUP_TIME = 30000;
+
 const COLORS = ["#6d001a", "#be0039", "#ff4500", "#ffa800", "#ffd635","#fff8b8",
                 "#00a368", "#00cc78", "#7eed56", "#00756f", "#009eaa", "#00ccc0",
                 "#2450a4", "#3690ea", "#51e9f4", "#493ac1", "#6a5cff", "#94b3ff",
@@ -15,6 +17,9 @@ const COLORS = ["#6d001a", "#be0039", "#ff4500", "#ffa800", "#ffd635","#fff8b8",
 
 var PIXELS = [];
 var HISTORY = [];
+
+var lastBackup = new Date().getTime();
+var upt = false;
 
 if(!fs.existsSync(PIXELS_SAVE_FILE)) {
     var pixs = [];
@@ -44,6 +49,7 @@ function setPixel(coord, color) {
     
     addHistoryEntry(coord, color);
     PIXELS[coord[1]][coord[0]] = color;
+    upt = true;
 }
 
 function addHistoryEntry(coord, color) {
@@ -60,7 +66,11 @@ function addHistoryEntry(coord, color) {
 function getPeriodicData() {
     let data = Object.values(HISTORY);
     HISTORY = [];
-    writeBackup(data);
+
+    if(new Date().getTime() - lastBackup >= BACKUP_TIME && upt) {
+        writeBackup(data);
+        lastBackup = new Date().getTime();
+    }
 
     return data;
 }
@@ -79,7 +89,8 @@ function writeBackup(historyData) {
         fs.writeFileSync(HISTORY_SAVE_FILE, JSON.stringify(oldData));
     });
 
-    fs.writeFile(PIXELS_SAVE_FILE, JSON.stringify(PIXELS), ()=>{})
+    fs.writeFile(PIXELS_SAVE_FILE, JSON.stringify(PIXELS), ()=>{});
+    upt = false;
 }
 
 module.exports = {
